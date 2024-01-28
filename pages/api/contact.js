@@ -1,13 +1,31 @@
-import {query} from '@/pages/lib/db'
+import { query } from "@/pages/lib/db";
 
 export default async function handler(req, res) {
-  if(req.method === 'GET'){
+  let message;
+  if (req.method === "GET") {
     const contact = await query({
-      query:"SELECT* FROM manage",
+      query: "SELECT * FROM manage",
       values: [],
-    })
-    res.status(200).json({ contact : contact});
+    });
+    res.status(200).json({ contact: contact });
     
+  } else if (req.method === "POST") {
+    const Name = req.body.Name;
+    const number = req.body.number;
+    const newName = await query({
+      query: "INSERT INTO manage (Name , number) VALUES (? , ?)",
+      values: [Name , number],
+    });
+    if (newName.insertId) {
+      message = "sucess";
+    } else {
+      message = "error";
+    }
+    let contact = {
+      id: newName.insertId,
+      Name: Name,
+      number: number,
+    };
+    res.status(200).json({ response: { message: message, contact: contact } });
   }
-
 }

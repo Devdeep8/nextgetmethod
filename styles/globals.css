@@ -15,31 +15,6 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-.contact-container {
-  border: 1px solid #ffffff;
-  padding: 10px;
-  margin: 10px;
-  width: 200px;
-  text-align: center;
-  display: flex;
-}
-
-.contact-name {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: #ffffff;
-  display: flex;
-  padding: 5px;
-  margin: 5px;
-}
-
-.contact-info {
-  
-  color: #ffffff;
-  display: flex;
-  padding: 5px;
-  margin: 5px;
-}
 
 
 body {
