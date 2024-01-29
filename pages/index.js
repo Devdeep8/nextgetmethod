@@ -13,7 +13,6 @@ export default function Home() {
   const [deleted, setDeleted] = useState(false);
   const [id, setId] = useState("");
   const [deleteid, setDeleteId] = useState("");
-  const contactNameRef = useRef();
   const contactUpdateRef = useRef();
   const contactUpdateIdRef = useRef();
   const contactUpdateNameRef = useRef();
