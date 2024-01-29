@@ -10,7 +10,9 @@ export default function Home() {
   const [contact, setcontact] = useState([]);
   const [created, setCreated] = useState(false);
   const [updated, setUpdated] = useState(false);
+  const [deleted, setDeleted] = useState(false);
   const [id, setId] = useState("");
+  const [deleteid, setDeleteId] = useState("");
   const contactNameRef = useRef();
   const contactUpdateRef = useRef();
   const contactUpdateIdRef = useRef();
@@ -70,16 +72,34 @@ export default function Home() {
     
   };
 
+  const deleteContact = async () => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL}/api/contact`,
+      {
+        method: "DELETE",
+        body: JSON.stringify({
+          id: deleteid,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+    setDeleted(true);
+  }
+
   useEffect(() => {
     getContact();
   }, []);
 
   return (
     <>
-      <div>
+       <div className="mt-8">
         {contact.map((contact, id) => (
-          <div key={id}>
-            <ul>
+          <div key={id} className="mb-2">
+            <ul className="list-disc">
               <li>
                 {contact.id} - {contact.Name} - {contact.number}
               </li>
@@ -87,41 +107,36 @@ export default function Home() {
           </div>
         ))}
       </div>
-      <div>
+
+      <div className="mt-4">
         <input
           type="text"
           value={name}
-          name=""
-          id=""
-          onChange={(e) => {
-            setName(e.target.value);
-          }}
-          ref={contactNameRef}
-          className=" text-black"
+          onChange={(e) => setName(e.target.value)}
+          className="border p-2"
+          placeholder="Name"
         />
       </div>
-      <div>
+
+      <div className="mt-4 text-black">
         <input
           type="text"
           value={number}
-          name=""
-          id=""
-          onChange={(e) => {
-            setNumber(e.target.value);
-          }}
-          className=" text-black mt-4"
+          onChange={(e) => setNumber(e.target.value)}
+          className="border p-2"
+          placeholder="Number"
         />
       </div>
-      {created ? <div>Name is add</div> : null}
-      <div>
-        <input
-          type="button"
-          value="save"
-          onClick={addContact}
-          className="cursor-pointer pl-3"
-        />
+
+      {created ? <div className="text-green-500 mt-2">Name is added</div> : null}
+
+      <div className="mt-4">
+        <button onClick={addContact} className="bg-blue-500 text-white p-2 cursor-pointer">
+          Save
+        </button>
       </div>
-      <div ref={contactUpdateRef} className="flex text-black ">
+
+      <div ref={contactUpdateRef} className="flex text-black  mt-10">
         <input
           placeholder="id..."
           type="text"
@@ -156,6 +171,18 @@ export default function Home() {
           className=" ml-60 mt-4 cursor-pointer"
         />
       </div>
+
+      <div className=" text-black">
+        <input type="text" 
+        value={deleteid} 
+        onChange={e => setDeleteId(e.target.value)}
+        />
+      </div>
+      {deleted ? <div>Name is updated</div> : null}
+      <div>
+        <input type="button" value="Delete" onClick={deleteContact} className=" cursor-pointer" />
+      </div>
+
     </>
   );
 }

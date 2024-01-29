@@ -50,4 +50,23 @@ export default async function handler(req, res) {
     };
     res.status(200).json({ response : { message : message , contact : contact}})
   }
+  else if (req.method === "DELETE"){
+    const id = req.body.id
+    const deleteContact = await query({
+      query: "DELETE FROM manage WHERE id = ?",
+      values: [id]
+    })
+    const results = deleteContact.affectedRows;
+    if(results){
+      message = "sucess"
+    }else{
+      message = "error"
+    }
+
+    const contact = {
+      id: id
+    }
+    res.status(200).json({ response : { message : message , contact : contact}})
+  }
+
 }
