@@ -2,13 +2,12 @@
 
 import { useEffect, useState, useRef } from "react";
 
+import { useRouter } from "next/navigation";
+
 export default function Home() {
-  const [name, setName] = useState("");
   const [updateName, setUpdateName] = useState("");
-  const [number, setNumber] = useState("");
   const [updateNumber, setUpdateNumber] = useState("");
   const [contact, setcontact] = useState([]);
-  const [created, setCreated] = useState(false);
   const [updated, setUpdated] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [id, setId] = useState("");
@@ -17,6 +16,7 @@ export default function Home() {
   const contactUpdateIdRef = useRef();
   const contactUpdateNameRef = useRef();
   const contactUpdateNumberRef = useRef();
+  const router = useRouter();
 
   async function getContact() {
     const postData = {
@@ -30,16 +30,17 @@ export default function Home() {
       postData
     );
     const response = await res.json();
-    console.log(response.contact);
+    // console.log(response.contact);
     setcontact(response.contact);
   }
 
-  const addContact = async () => {
+  const updateContact = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/contact`, {
-      method: "POST",
+      method: "PUT",
       body: JSON.stringify({
-        Name: name,
-        number: number,
+        id: id,
+        Name: updateName,
+        number: updateNumber,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -47,47 +48,23 @@ export default function Home() {
     });
     const data = await response.json();
     console.log(data);
-    setCreated(true);
-  };
-
-  const updateContact = async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/contact`,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            id: id,
-            Name: updateName,
-            number: updateNumber,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      setUpdated(true);
-    
+    setUpdated(true);
   };
 
   const deleteContact = async () => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL}/api/contact`,
-      {
-        method: "DELETE",
-        body: JSON.stringify({
-          id: deleteid,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/contact`, {
+      method: "DELETE",
+      body: JSON.stringify({
+        id: deleteid,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     const data = await response.json();
     console.log(data);
     setDeleted(true);
-  }
+  };
 
   useEffect(() => {
     getContact();
@@ -95,7 +72,7 @@ export default function Home() {
 
   return (
     <>
-       <div className="mt-8">
+      <div className="mt-8">
         {contact.map((contact, id) => (
           <div key={id} className="mb-2">
             <ul className="list-disc">
@@ -106,32 +83,13 @@ export default function Home() {
           </div>
         ))}
       </div>
-
-      <div className="mt-4">
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border p-2"
-          placeholder="Name"
-        />
-      </div>
-
-      <div className="mt-4 text-black">
-        <input
-          type="text"
-          value={number}
-          onChange={(e) => setNumber(e.target.value)}
-          className="border p-2"
-          placeholder="Number"
-        />
-      </div>
-
-      {created ? <div className="text-green-500 mt-2">Name is added</div> : null}
-
-      <div className="mt-4">
-        <button onClick={addContact} className="bg-blue-500 text-white p-2 cursor-pointer">
-          Save
+      <div>
+        <button
+          type="button"
+          onClick={() => router.push("/addcontact")}
+          className="bg-blue-500 text-white p-2 cursor-pointer"
+        >
+          addContact
         </button>
       </div>
 
@@ -172,16 +130,21 @@ export default function Home() {
       </div>
 
       <div className=" text-black">
-        <input type="text" 
-        value={deleteid} 
-        onChange={e => setDeleteId(e.target.value)}
+        <input
+          type="text"
+          value={deleteid}
+          onChange={(e) => setDeleteId(e.target.value)}
         />
       </div>
       {deleted ? <div>Name is updated</div> : null}
       <div>
-        <input type="button" value="Delete" onClick={deleteContact} className=" cursor-pointer" />
+        <input
+          type="button"
+          value="Delete"
+          onClick={deleteContact}
+          className=" cursor-pointer"
+        />
       </div>
-
     </>
   );
 }
